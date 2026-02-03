@@ -1,0 +1,13 @@
+<div class="content font-scale">
+  <h1 class="projector_h1">
+    {{ if .Assignment }}
+      {{ .Assignment.Title }} &middot;
+    {{ end }}
+    {{ .CandidateName }}
+  </h1>
+  {{ if .Application }}
+    <div class="detail-view-text">
+      {{ .Application }}
+    </div>
+  {{ end }}
+</div>
