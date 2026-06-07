@@ -87,8 +87,8 @@ func pollSingleVotesSlideHandler(ctx context.Context, req *projectionRequest) (m
 		Preload(pQ.OptionList().VoteList()).
 		Preload(pQ.GlobalOption().VoteList()).
 		Preload(pQ.EntitledGroupList().MeetingUserList().User()).
-		Preload(pQ.EntitledGroupList().MeetingUserList().VoteDelegatedTo().User()).
-		Preload(pQ.EntitledGroupList().MeetingUserList().VoteDelegatedTo().User().IsPresentInMeetingList()).
+		Preload(pQ.EntitledGroupList().MeetingUserList().VoteDelegatedToList().User()).
+		Preload(pQ.EntitledGroupList().MeetingUserList().VoteDelegatedToList().User().IsPresentInMeetingList()).
 		Preload(pQ.EntitledGroupList().MeetingUserList().User().IsPresentInMeetingList()).
 		Preload(pQ.EntitledGroupList().MeetingUserList().StructureLevelList()).First(ctx)
 	if err != nil {
@@ -285,12 +285,11 @@ func pollSingleVotesVoteEntry(
 	hasDelegate := false
 	delegatePresent := false
 
-	if mu.VoteDelegatedTo != nil {
-		if delegateMU, ok := mu.VoteDelegatedTo.Value(); ok {
-			delegatePresent = slices.Contains(delegateMU.User.IsPresentInMeetingIDs, poll.MeetingID)
-			if delegatePresent {
-				hasDelegate = true
-			}
+	for _, delegateMU := range mu.VoteDelegatedToList {
+		delegatePresent = slices.Contains(delegateMU.User.IsPresentInMeetingIDs, poll.MeetingID)
+		if delegatePresent {
+			hasDelegate = true
+			break
 		}
 	}
 
